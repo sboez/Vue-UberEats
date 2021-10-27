@@ -16,9 +16,6 @@
 <script>
 export default {
 	name: 'RestaurantCard',
-	props: {
-		msg: String,
-	},
 };
 </script>
 
