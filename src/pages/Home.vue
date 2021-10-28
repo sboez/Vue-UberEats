@@ -4,7 +4,11 @@
 			<img
 				src="https://d3i4yxtzktqr9n.cloudfront.net/web-eats-v2/ee037401cb5d31b23cf780808ee4ec1f.svg"
 			/>
-			<input type="text" placeholder="De quoi avez-vous envie ?" />
+			<input
+				v-model="user_search"
+				type="text"
+				placeholder="De quoi avez-vous envie ?"
+			/>
 		</div>
 		<div class="banniere"></div>
 		<RestaurantRow
@@ -17,7 +21,7 @@
 
 <script>
 import BDD from '../BDD';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import RestaurantRow from '../components/RestaurantRow.vue';
 export default {
 	name: 'Home',
@@ -35,6 +39,7 @@ export default {
 		}
 
 		let data_restaurant = ref([]);
+		let all_restaurants = [];
 
 		const makeDataRestaurant = () => {
 			let three_restaurant = [];
@@ -47,6 +52,9 @@ export default {
 					restaurant.drive_time
 				);
 
+				// make all restuarants array
+				all_restaurants.push(new_restaurant);
+
 				if (three_restaurant.length === 2) {
 					three_restaurant.push(new_restaurant);
 					data_restaurant.value.push(three_restaurant);
@@ -57,10 +65,23 @@ export default {
 			}
 		};
 
+		let user_search = ref('');
+
+		watch(user_search, (new_value) => {
+			let regex = RegExp(new_value);
+
+			let search_restaurant = all_restaurants.filter((restaurant) =>
+				regex.test(restaurant.name)
+			);
+
+			console.log(search_restaurant);
+		});
+
 		onMounted(makeDataRestaurant);
 
 		return {
 			data_restaurant,
+			user_search,
 		};
 	},
 };
