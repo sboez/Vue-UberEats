@@ -4,11 +4,25 @@
 			<img
 				src="https://d3i4yxtzktqr9n.cloudfront.net/web-eats-v2/ee037401cb5d31b23cf780808ee4ec1f.svg"
 			/>
-			<input
-				v-model="user_search"
-				type="text"
-				placeholder="De quoi avez-vous envie ?"
-			/>
+			<div class="wrapper-input">
+				<input
+					v-model="user_search"
+					type="text"
+					placeholder="De quoi avez-vous envie ?"
+				/>
+				<div class="search">
+					<div
+						v-for="(restaurant, i) in search_restaurant"
+						:key="i"
+						class="container-restaurant-search"
+					>
+						<div class="wrapper-img">
+							<img :src="restaurant.image" />
+						</div>
+						<p>{{ restaurant.name }}</p>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="banniere"></div>
 		<RestaurantRow
@@ -66,15 +80,20 @@ export default {
 		};
 
 		let user_search = ref('');
+		let search_restaurant = ref([]);
 
 		watch(user_search, (new_value) => {
-			let regex = RegExp(new_value);
+			let regex = RegExp(new_value.toLowerCase());
 
-			let search_restaurant = all_restaurants.filter((restaurant) =>
-				regex.test(restaurant.name)
+			let new_search_restaurant = all_restaurants.filter((restaurant) =>
+				regex.test(restaurant.name.toLowerCase())
 			);
 
-			console.log(search_restaurant);
+			search_restaurant.value = new_search_restaurant;
+
+			new_value == 0
+				? (search_restaurant.value = [])
+				: (search_restaurant.value = new_search_restaurant);
 		});
 
 		onMounted(makeDataRestaurant);
@@ -82,6 +101,7 @@ export default {
 		return {
 			data_restaurant,
 			user_search,
+			search_restaurant,
 		};
 	},
 };
@@ -98,13 +118,44 @@ export default {
 		img {
 			width: 200px;
 		}
-		input {
-			background-color: #f6f6f6;
-			border: none;
-			height: 60px;
-			width: 400px;
-			outline: none;
-			padding-left: 20px;
+		.wrapper-input {
+			position: relative;
+			input {
+				background-color: #f6f6f6;
+				border: none;
+				height: 60px;
+				width: 400px;
+				outline: none;
+				padding-left: 20px;
+			}
+			.search {
+				position: absolute;
+				top: 100%;
+				width: 100%;
+				background-color: #ffffff;
+
+				.container-restaurant-search {
+					display: flex;
+					align-items: center;
+					padding: 10px;
+					&:hover {
+						background: #f6f6f6;
+					}
+
+					.wrapper-img {
+						height: 60px;
+						width: 60px;
+						margin-right: 25px;
+						border-radius: 50%;
+						overflow: hidden;
+
+						img {
+							height: 100%;
+							width: auto;
+						}
+					}
+				}
+			}
 		}
 	}
 	.banniere {
