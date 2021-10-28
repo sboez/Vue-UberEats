@@ -1,5 +1,5 @@
 <template>
-	<p>Restaurant</p>
+	<p>{{ $route.params.name }}</p>
 </template>
 
 <script>
